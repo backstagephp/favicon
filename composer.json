@@ -1,0 +1,64 @@
+{
+    "name": "backstage/favicon",
+    "description": "Fetch, convert, and cache favicons for any website in your Laravel app.",
+    "keywords": [
+        "laravel",
+        "favicon",
+        "icon",
+        "image",
+        "svg",
+        "webp",
+        "avif"
+    ],
+    "homepage": "https://github.com/backstagephp/favicon",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mark van Eijk",
+            "email": "mark@ux.nl"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-imagick": "*",
+        "illuminate/contracts": "^10.0|^11.0|^12.0",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "illuminate/http": "^10.0|^11.0|^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0|^9.0|^10.0",
+        "pestphp/pest": "^2.34|^3.0",
+        "pestphp/pest-plugin-laravel": "^2.4|^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Backstage\\Favicon\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Backstage\\Favicon\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Backstage\\Favicon\\FaviconServiceProvider"
+            ],
+            "aliases": {
+                "Favicon": "Backstage\\Favicon\\Facades\\Favicon"
+            }
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

@@ -1,0 +1,2 @@
+providers:
+  - Backstage\Favicon\FaviconServiceProvider
