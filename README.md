@@ -61,12 +61,17 @@ class Site extends Model
 
     // Reads from $site->website by default; override per-model:
     protected string $faviconSource = 'homepage_url';
+
+    // Optional: override the package-wide default type/size for this model.
+    protected string $faviconType = 'webp';
+    protected int $faviconSize = 64;
 }
 ```
 
 ```php
-$site->favicon;                 // accessor, default type/size
-$site->faviconUrl('webp', 64);
+$site->favicon;                 // accessor, uses $faviconType/$faviconSize (or config defaults)
+$site->faviconUrl();            // same as above
+$site->faviconUrl('png', 32);   // explicit args still win over both
 ```
 
 ### Artisan command
