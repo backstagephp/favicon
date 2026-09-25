@@ -14,6 +14,11 @@ final class HtmlLinkParser
         'apple-touch-icon-precomposed',
     ];
 
+    // iOS renders touch icons at 180x180, so one declared without a
+    // `sizes` attribute is assumed to be that large rather than unknown,
+    // letting it outrank a small, explicitly sized tab icon.
+    private const APPLE_TOUCH_ICON_SIZE = 180;
+
     /**
      * @return array{icons: FaviconSource[], manifest: string|null}
      */
@@ -52,7 +57,8 @@ final class HtmlLinkParser
 
             $absolute = $this->resolveUrl($href, $baseUrl);
             $type = $this->guessTypeFromUrl($absolute, $link->getAttribute('type'));
-            $sizeHint = $this->parseSizes($link->getAttribute('sizes'));
+            $sizeHint = $this->parseSizes($link->getAttribute('sizes'))
+                ?? (str_starts_with($rel, 'apple-touch-icon') ? self::APPLE_TOUCH_ICON_SIZE : null);
 
             $icons[] = new FaviconSource($absolute, $type, $sizeHint);
         }

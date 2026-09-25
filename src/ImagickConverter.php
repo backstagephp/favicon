@@ -128,7 +128,11 @@ class ImagickConverter
     private function toSquare(Imagick $image, int $size): Imagick
     {
         $image->setImageFormat('png32');
-        $image->thumbnailImage($size, $size, true, false);
+        // resizeImage rather than thumbnailImage: the latter point-samples
+        // large reductions (e.g. 192 -> 32) down to 5x the target first,
+        // which drops the thin strokes favicons are full of.
+        $image->resizeImage($size, $size, Imagick::FILTER_LANCZOS, 1, true);
+        $image->stripImage();
         $image->extentImage(
             $size,
             $size,
