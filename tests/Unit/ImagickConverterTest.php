@@ -24,7 +24,24 @@ function transparentSourcePng(): string
     return $bytes;
 }
 
+function imagickEncodes(string $format): bool
+{
+    try {
+        $probe = new Imagick();
+        $probe->newImage(1, 1, new ImagickPixel('white'));
+        $probe->setImageFormat($format);
+
+        return $probe->getImageBlob() !== '';
+    } catch (ImagickException) {
+        return false;
+    }
+}
+
 it('converts a transparent source into every supported raster type', function (string $type) {
+    if ($type === 'avif' && ! imagickEncodes('avif')) {
+        $this->markTestSkipped('This ImageMagick build has no AVIF encoder.');
+    }
+
     $bytes = converter()->toRaster(transparentSourcePng(), 'png', $type, 32);
 
     expect($bytes)->not->toBeEmpty();
