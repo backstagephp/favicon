@@ -8,7 +8,7 @@ Given a site URL, the package discovers the best available icon source (preferri
 
 - PHP 8.2+
 - The `imagick` PHP extension, ideally built with the `librsvg` delegate (for SVG rasterization) and `libheif` delegate (for AVIF)
-- Laravel 10, 11, or 12
+- Laravel 10, 11, 12, or 13
 
 ## Installation
 
@@ -106,9 +106,10 @@ For a given site, the package:
 
 1. Fetches the page and parses `<link rel="icon">`, `rel="shortcut icon"`, `rel="apple-touch-icon"`, `rel="apple-touch-icon-precomposed"`, and `rel="mask-icon"` tags, plus `<link rel="manifest">` and its `icons` array.
 2. Falls back to `/favicon.ico` at the domain root.
-3. Ranks every candidate: SVG first, then ICO, then PNG/WebP/AVIF (largest declared size wins), then JPG.
+3. Ranks every candidate: SVG first, then ICO, then PNG/WebP/AVIF (largest declared size wins; an apple-touch-icon without `sizes` counts as 180px), then JPG.
 4. Downloads the best candidate and sniffs its real type from magic bytes (not the `Content-Type` header, which is often wrong).
 5. If the source is a multi-frame `.ico`, the largest embedded frame is used.
+6. Resizes with a Lanczos filter, so the thin strokes of a detailed icon survive being scaled down to 16 or 32px.
 
 ## Storage
 

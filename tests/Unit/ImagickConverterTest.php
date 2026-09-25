@@ -24,7 +24,24 @@ function transparentSourcePng(): string
     return $bytes;
 }
 
+function imagickEncodes(string $format): bool
+{
+    try {
+        $probe = new Imagick();
+        $probe->newImage(1, 1, new ImagickPixel('white'));
+        $probe->setImageFormat($format);
+
+        return $probe->getImageBlob() !== '';
+    } catch (ImagickException) {
+        return false;
+    }
+}
+
 it('converts a transparent source into every supported raster type', function (string $type) {
+    if ($type === 'avif' && ! imagickEncodes('avif')) {
+        $this->markTestSkipped('This ImageMagick build has no AVIF encoder.');
+    }
+
     $bytes = converter()->toRaster(transparentSourcePng(), 'png', $type, 32);
 
     expect($bytes)->not->toBeEmpty();
@@ -66,3 +83,24 @@ it('builds a multi-resolution ico with one frame per requested size', function (
 
     unlink($path);
 });
+
+it('keeps a one pixel stroke visible when downscaling a large source', function (int $x) {
+    $source = new Imagick();
+    $source->newImage(192, 192, new ImagickPixel('white'));
+    $line = new ImagickDraw();
+    $line->setFillColor(new ImagickPixel('black'));
+    $line->rectangle($x, 0, $x, 191);
+    $source->drawImage($line);
+    $source->setImageFormat('png32');
+
+    $image = new Imagick();
+    $image->readImageBlob(converter()->toRaster($source->getImageBlob(), 'png', 'png', 32));
+
+    $darkest = min(array_map(
+        fn (int $column) => $image->getImagePixelColor($column, 16)->getColor()['r'],
+        range(0, 31),
+    ));
+
+    // A point-sampling pre-pass drops the column entirely (pure white).
+    expect($darkest)->toBeLessThan(240);
+})->with([1, 4, 7, 96]);
