@@ -71,14 +71,17 @@ return [
     |
     | Lower number = preferred. Used to rank candidate favicon sources found
     | on the page (<link> tags, manifest icons, /favicon.ico fallback).
+    | Format outranks declared size, so 'ico' sits below the modern rasters:
+    | a favicon.ico rarely holds more than 64px and would otherwise beat a
+    | site's 512px PNG, leaving every larger variant upscaled.
     |
     */
     'source_priority' => [
         'svg' => 0,
-        'ico' => 1,
-        'png' => 2,
-        'webp' => 2,
-        'avif' => 2,
+        'png' => 1,
+        'webp' => 1,
+        'avif' => 1,
+        'ico' => 2,
         'jpg' => 3,
         'jpeg' => 3,
         'gif' => 4,

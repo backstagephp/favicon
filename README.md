@@ -2,7 +2,7 @@
 
 Fetch, convert, and cache favicons for any website in your Laravel app.
 
-Given a site URL, the package discovers the best available icon source (preferring an SVG over an ICO over a raster PNG/WebP/AVIF over a JPG), downloads it, and converts it into whichever size/format you ask for — caching the result on disk so subsequent requests are instant until the TTL expires.
+Given a site URL, the package discovers the best available icon source (preferring an SVG over the largest PNG/WebP/AVIF over an ICO over a JPG), downloads it, and converts it into whichever size/format you ask for — caching the result on disk so subsequent requests are instant until the TTL expires.
 
 ## Requirements
 
