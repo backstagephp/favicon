@@ -36,6 +36,25 @@ it('discovers an svg icon over other candidates and converts it to png', functio
     expect($info[0])->toBe(32)->and($info[1])->toBe(32);
 });
 
+it('prefers the largest declared png over a declared favicon.ico', function () {
+    $ico = (new \Backstage\Favicon\ImagickConverter(config('favicon')))
+        ->toIco(samplePng(), 'png', [16, 32]);
+
+    Http::fake([
+        'https://icoandpng.test/' => Http::response(
+            '<html><head><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/icon-32.png" sizes="32x32" type="image/png"><link rel="icon" href="/icon-512.png" sizes="512x512" type="image/png"></head></html>'
+        ),
+        'https://icoandpng.test/favicon.ico' => Http::response($ico),
+        'https://icoandpng.test/icon-512.png' => Http::response(samplePng(512)),
+    ]);
+
+    Favicon::for('https://icoandpng.test')->get('png', 32);
+
+    $meta = Favicon::readMeta(Favicon::domainKey('https://icoandpng.test'));
+
+    expect($meta['source_url'])->toBe('https://icoandpng.test/icon-512.png');
+});
+
 it('falls back to /favicon.ico when no link tags are present', function () {
     $ico = (new \Backstage\Favicon\ImagickConverter(config('favicon')))
         ->toIco(samplePng(), 'png', [16, 32]);
